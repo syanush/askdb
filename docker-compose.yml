@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  testdb:
+    image: postgres:16
+    container_name: testdb
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_DB: postgres
+    volumes:
+      - testdb_data:/var/lib/postgresql/data
+      - ./database/init_test_db.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+
+  langflow_custom:
+    build:
+      context: ./askdb
+    image: langflow-custom
+    container_name: langflow-custom
+    depends_on:
+      - testdb
+    ports:
+      - "7860:7860"
+
+volumes:
+  testdb_data:
